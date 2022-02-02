@@ -1,0 +1,25 @@
+{
+  "name": "node-scaling-sniffle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShinobiWPS/node-scaling-sniffle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShinobiWPS/node-scaling-sniffle/issues"
+  },
+  "homepage": "https://github.com/ShinobiWPS/node-scaling-sniffle#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "http-errors": "^1.8.1"
+  }
+}
