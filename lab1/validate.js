@@ -1,12 +1,7 @@
 'use strict'
 const assert = require('assert').strict
-const { once } = require('events')
 const { spawn } = require('child_process')
 const http = require('http')
-const { tmpdir } = require('os')
-const { join } = require('path')
-const { writeFileSync } = require('fs')
-const { randomBytes } = require('crypto')
 const { promisify } = require('util')
 
 const timeout = promisify(setTimeout)
@@ -17,43 +12,42 @@ const get = promisify((url, cb) => {
     cb(err)
   })
 })
-const HOST = 'http://localhost:3000'
-const injectPath = join(tmpdir(), 'inject.js')
-const data = randomBytes(10).toString('base64')
-const inject = `require('crypto').randomBytes = () => '${data}'`
-
-writeFileSync(injectPath, inject)
-
-const server = spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['start'], {
-  env: { ...process.env, NODE_OPTIONS: `-r ${injectPath}` }
+const post = promisify((url, cb) => {
+  http.request(url, { method: 'POST' }, (res) => {
+    cb(null, res)
+  }).once('error', (err) => {
+    cb(err)
+  }).end()
 })
+const HOST = 'http://localhost:3000'
+
+
+const server = spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['start'])
 
 server.stderr.pipe(process.stderr)
 
-async function dataCheck () {
+async function okCheck () {
   const res = await get(HOST)
-
-  const [content] = await once(res, 'data')
-
-  assert.equal(
-    content.toString(),
-    data,
-    `${HOST} must respond with result calling data lib function`
-  )
-
-  console.log(`☑️  GET ${HOST}/ responded with data output`)
-}
-
-async function notFoundCheck () {
-  const res = await get(`${HOST}/example`)
 
   assert.equal(
     res.statusCode,
-    404,
-    `${HOST}/example must respond with 404 Not Found status`
+    200,
+    `GET ${HOST}/ must respond with a 200 OK status`
   )
 
-  console.log(`☑️  GET ${HOST}/example responded with 404 Not Found status`)
+  console.log(`☑️  GET ${HOST}/ responded with a 200 OK status`)
+}
+
+async function methodNotAllowedCheck () {
+  const res = await post(`${HOST}/`)
+
+  assert.equal(
+    res.statusCode,
+    405,
+    `POST ${HOST}/ must respond with 405 Method Not Allowed status`
+  )
+
+  console.log(`☑️  POST ${HOST}/ responded with 405 Method Not Allowed status`)
 }
 
 async function validate (retries = 0) {
@@ -63,8 +57,8 @@ async function validate (retries = 0) {
     if (retries > 10) {
       assert.fail(`Unable to connect to server at ${HOST}`)
     }
-    await dataCheck()
-    await notFoundCheck()
+    await okCheck()
+    await methodNotAllowedCheck()
     done = true
     passed = true
   } catch (err) {

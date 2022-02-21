@@ -5,13 +5,12 @@ const app = express();
 const port = 3000;
 
 app.get('/', async (req, res) => {
-  const value = await data();
-  res.send('Hello World! ' + value);
+  res.sendStatus(200);
 });
 
 app.use((req, res, next) => {
-  if (req.originalUrl !== '/') {
-    res.sendStatus(404);
+  if (req.method !== 'GET') {
+    res.sendStatus(405);
   }
 });
 
