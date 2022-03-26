@@ -8,7 +8,6 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-const { BOAT_SERVICE_PORT, BRAND_SERVICE_PORT } = process.env;
 
 var app = express();
 
