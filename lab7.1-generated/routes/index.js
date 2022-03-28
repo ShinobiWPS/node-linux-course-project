@@ -22,7 +22,6 @@ router.get('/', async function (req, res, next) {
     if (err.response.statusCode === 404) {
       res.status(404).json({});
     }
-    throw err;
   }
 });
 
