@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www ",
-    "boatService": "node boat-service.js",
-    "brandService": "node brand-service.js"
+    "start": "BOAT_SERVICE_PORT=4000 BRAND_SERVICE_PORT=5000 node ./bin/www ",
+    "boatService": "PORT=4000 node boat-service.js",
+    "brandService": "PORT=5000 node brand-service.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
