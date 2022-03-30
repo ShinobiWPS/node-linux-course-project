@@ -29,7 +29,7 @@
     }))
   })
 
-  server.listen(process.env.PORT || 0, () => {
+  server.listen(process.env.PORT || 5000, () => {
     const { port } = server.address()
     console.log('Brand service listening on localhost on port: ' + port)
   })
