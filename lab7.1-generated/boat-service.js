@@ -30,7 +30,7 @@
     }))
   })
 
-  server.listen(process.env.PORT || 4000, () => {
+  server.listen(process.env.PORT || 0, () => {
     const { port } = server.address()
     console.log('Boat service listening on localhost on port: ' + port)
   })
