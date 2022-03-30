@@ -7,11 +7,14 @@
         {
             "type": "pwa-node",
             "request": "launch",
-            "name": "lab5.1",
+            "name": "proxy",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\lab5.1-generated\\bin\\www"
+            "program": "${workspaceFolder}\\proxy\\bin\\www",
+            "args": [
+                ""
+            ]
         }
     ]
 }
