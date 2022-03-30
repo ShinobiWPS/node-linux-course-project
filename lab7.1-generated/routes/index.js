@@ -12,16 +12,26 @@ router.get('/', async function (req, res, next) {
   try {
     const boat = await got(urlboat).json();
     const brand = await got(`${urlbrand}${boat.brand}`).json();
-    res.status(200).json({
+    res.json({
       id: boat.id,
       color: boat.color,
       brand: brand.name,
     });
   } catch (err) {
-    if (!err.response) throw err;
-    if (err.response.statusCode === 404) {
-      res.status(404).json({});
+    if (err?.response?.statusCode === 404) {
+      next();
+      return;
     }
+
+    if (err?.response?.statusCode === 400) {
+      const badRequest = new Error('bad request');
+      badRequest.status = 400;
+
+      next(badRequest);
+      return;
+    }
+
+    next(err);
   }
 });
 
