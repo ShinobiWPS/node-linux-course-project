@@ -4,7 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var proxy = require('express-http-proxy');
+const {
+  createProxyMiddleware,
+  responseInterceptor,
+} = require('http-proxy-middleware');
 const { rng } = require('crypto');
 
 var app = express();
@@ -19,22 +22,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// req has res inside
+const customRouter = function name(req) {
+  if (req.query.url.includes('redir')) {
+    return req.res.sendStatus(301);
+  } else if (req.query.url.includes('ok')) {
+    // set cookie header to test
+    req.res.setHeader('Set-Cookie', 'test');
+    req.res.setHeader('cookie', 'test');
+    req.res.cookie('test', 'test');
+    return req.res.status(200).json({ data: rng(5).toString('hex') });
+  } else {
+    return req.query.url;
+  }
+};
+
 app.get(
   '/',
-  proxy((req, res, next) => req.query.url, {
-    filter: function (req, res) {
-      if (req.query.url.includes('redir')) {
-        return res.sendStatus(301);
-      } else if (req.query.url.includes('ok')) {
-        // set cookie header to test
-        res.setHeader('Set-Cookie', 'test');
-        res.setHeader('cookie', 'test');
-        res.cookie('test', 'test');
-        return res.status(200).json({ data: rng(5).toString('hex') });
-      } else {
-        return req.query.url;
-      }
-    },
+  createProxyMiddleware({
+    changeOrigin: true,
+    router: customRouter,
   })
 );
 
