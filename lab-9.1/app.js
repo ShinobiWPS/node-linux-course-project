@@ -3,7 +3,13 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const { PORT = 3000 } = process.env;
+
 router.get('/', (req, res) => {
+  const key = req.query.un !== 'string' ? null : req.query.un;
+  const bella = key;
+  if (req.query.un) {
+  }
+
   setTimeout(() => {
     res.send((req.query.un || '').toUpperCase());
   }, 1000);
