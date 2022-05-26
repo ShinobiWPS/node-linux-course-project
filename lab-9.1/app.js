@@ -5,15 +5,18 @@ const router = express.Router();
 const { PORT = 3000 } = process.env;
 
 router.get('/', (req, res) => {
-  const key = req.query.un !== 'string' ? null : req.query.un;
-  const bella = key;
-  if (req.query.un) {
-  }
-
+  let key = typeof req.query.un === 'string' ? req.query.un : null;
+  console.log('key:', key);
+  console.log('req.query.un:', req.query.un);
+  key = Array.isArray(key) ? key[0] : key;
+  console.log('Array.isArray(key):', Array.isArray(key));
+  console.log('key:', key);
+  console.log('!!key:', !!key);
   setTimeout(() => {
-    res.send((req.query.un || '').toUpperCase());
+    res.send((key || '').toUpperCase());
   }, 1000);
 });
+
 app.use(router);
 app.listen(PORT, () => {
   console.log(`Express server listening on ${PORT}`);
